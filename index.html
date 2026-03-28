@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hunting weather conditions for turkey, deer, and duck hunting">
+    <meta name="theme-color" content="#3d3020">
+    <title>HuntCast - Hunting Weather Conditions</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header>
+            <div class="turkey-logo">
+                <svg viewBox="0 0 200 150" class="turkey-svg">
+                    <!-- Turkey in full strut -->
+                    <ellipse cx="100" cy="75" rx="80" ry="60" fill="#8B4513" opacity="0.3"/>
+                    <ellipse cx="100" cy="75" rx="70" ry="50" fill="#654321"/>
+                    <circle cx="100" cy="60" r="25" fill="#8B4513"/>
+                    <circle cx="95" cy="55" r="3" fill="#000"/>
+                    <path d="M 100 65 Q 95 70 100 72" stroke="#FF0000" stroke-width="2" fill="none"/>
+                    <path d="M 100 65 Q 105 70 100 72" stroke="#FF0000" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+            <h1>🎯 HuntCast</h1>
+            <p class="tagline">Prime Time Hunting Conditions</p>
+            
+            <!-- Location Controls -->
+            <div class="location-controls">
+                <p class="location" id="location">📍 Loading location...</p>
+                <button class="location-btn" onclick="toggleLocationInput()">📍 Change Location</button>
+            </div>
+            
+            <div id="location-input" class="location-input hidden">
+                <input type="text" id="city-input" placeholder="City" />
+                <input type="text" id="state-input" placeholder="State (e.g., AL)" maxlength="2" />
+                <button onclick="searchLocation()">Search</button>
+                <button onclick="useCurrentLocation()">Use My Location</button>
+            </div>
+            
+            <p class="last-updated" id="last-updated"></p>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading weather data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error hidden">
+            <p id="error-message">⚠️ Unable to load weather data</p>
+            <p class="error-hint">Try using Live Server or deploy to GitHub Pages</p>
+            <button onclick="location.reload()">Try Again</button>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content" class="hidden">
+            <!-- Current Weather -->
+            <section class="current-weather">
+                <div class="weather-summary">
+                    <div class="temp-display">
+                        <span class="temp" id="current-temp">--°F</span>
+                        <span class="feels-like" id="feels-like"></span>
+                    </div>
+                    <div class="weather-details">
+                        <p id="current-conditions">Loading...</p>
+                        <div class="weather-stats">
+                            <span id="pressure-display">--"</span>
+                            <span id="wind-display">-- mph</span>
+                            <span id="humidity-display">--%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Species Scores -->
+            <section class="species-scores">
+                <h2>Today's Hunting Conditions</h2>
+                
+                <div class="score-card turkey" id="turkey-card">
+                    <div class="card-header">
+                        <h3>🦃 Turkey</h3>
+                        <button class="info-btn" onclick="showDetails('turkey')">ℹ️</button>
+                    </div>
+                    <div class="rating" id="turkey-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="rating-text" id="turkey-rating-text">Excellent</p>
+                    <p class="score" id="turkey-score">--/100</p>
+                    <p class="explanation" id="turkey-explanation"></p>
+                </div>
+
+                <div class="score-card deer" id="deer-card">
+                    <div class="card-header">
+                        <h3>🦌 Deer</h3>
+                        <button class="info-btn" onclick="showDetails('deer')">ℹ️</button>
+                    </div>
+                    <div class="rating" id="deer-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="rating-text" id="deer-rating-text">Excellent</p>
+                    <p class="score" id="deer-score">--/100</p>
+                    <p class="explanation" id="deer-explanation"></p>
+                </div>
+
+                <div class="score-card duck" id="duck-card">
+                    <div class="card-header">
+                        <h3>🦆 Duck</h3>
+                        <button class="info-btn" onclick="showDetails('duck')">ℹ️</button>
+                    </div>
+                    <div class="rating" id="duck-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="rating-text" id="duck-rating-text">Excellent</p>
+                    <p class="score" id="duck-score">--/100</p>
+                    <p class="explanation" id="duck-explanation"></p>
+                </div>
+            </section>
+
+            <!-- 7-Day Forecast -->
+            <section class="forecast-section">
+                <div class="section-header">
+                    <h2>7-Day Forecast</h2>
+                    <button class="expand-btn" onclick="toggleForecast()">▼</button>
+                </div>
+                
+                <div id="best-days" class="best-days hidden">
+                    <h3>🏆 Best Hunting Days</h3>
+                    <div id="best-days-list"></div>
+                </div>
+
+                <div id="forecast-container" class="forecast-container">
+                    <!-- Forecast days will be added here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Refresh Button -->
+            <button class="refresh-btn" onclick="refreshData()">
+                🔄 Refresh Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeDetails()">✕</button>
+            <div id="detail-content"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
